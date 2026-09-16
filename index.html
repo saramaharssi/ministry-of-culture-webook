@@ -319,13 +319,9 @@ input { font: inherit; }
   overflow: hidden;
   background: #fff;
 }
-/* Video box's own height, unchanged throughout every iteration of this
-   section. Figma reference proportion (525 / 1512 = 34.72% of width),
-   bumped up 15% (34.72 * 1.15 ≈ 39.93vw) for a taller banner while keeping
-   the same aspect-ratio-based approach — tracks the design at any screen
-   size, no upper cap. */
-.hero-banner__media { position: relative; width: 100%; height: max(276px, 39.93vw); overflow: hidden; }
-@media (max-width: 639px) { .hero-banner__media { height: 400px; } }
+/* Flat ~400px video height at every screen size, matching the Figma
+   reference's proportions more closely than the old vw-scaled formula. */
+.hero-banner__media { position: relative; width: 100%; height: 400px; overflow: hidden; }
 /* The container is a short band, so `cover` only ever shows a slice of the
    frame. Centred put that slice across the performers' chests; pulling the
    focal point up the source frame brings their heads into it. */
@@ -333,12 +329,21 @@ input { font: inherit; }
 /* Matches the Figma reference: a subtle bottom vignette, not a fade to
    solid white — the video plays through at full strength, just gently
    darkened at the very bottom edge for depth. */
+/* Stops sampled directly from the Figma reference's rendered pixels (its
+   fade is a flattened fill on the frame, not an inspectable gradient
+   token) — flat/untouched through the top half, then easing up to a
+   near-white bottom edge. */
 .hero-banner__fade {
   position: absolute; inset: 0;
   background: linear-gradient(to bottom,
     rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0) 78%,
-    rgba(255,255,255,0.55) 100%);
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.30) 60%,
+    rgba(255,255,255,0.38) 70%,
+    rgba(255,255,255,0.57) 80%,
+    rgba(255,255,255,0.78) 90%,
+    rgba(255,255,255,0.90) 95%,
+    rgba(255,255,255,0.99) 100%);
 }
 .hero-banner__content {
   position: relative; z-index: 10; margin: 0 auto; display: flex; width: 100%;
