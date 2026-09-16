@@ -328,6 +328,12 @@ input { font: inherit; }
    size, no upper cap. Floor bumped by the same 15% so the lockup (which
    centers on this box) never gets squeezed. */
 .hero-banner__media { position: relative; width: 100%; height: max(276px, 39.93vw); overflow: hidden; }
+/* Restores the mobile video's previously-approved height (it was bumped
+   from the 276px floor earlier to fit the lockup + gapped title/subtitle
+   inside this same box) — with the title now living below the video
+   instead of inside it, this is purely about matching the video's already-
+   approved on-screen size on mobile, not preventing any overlap. */
+@media (max-width: 639px) { .hero-banner__media { height: 400px; } }
 /* The container is a short band, so `cover` only ever shows a slice of the
    frame. Centred put that slice across the performers' chests; pulling the
    focal point up the source frame brings their heads into it. */
