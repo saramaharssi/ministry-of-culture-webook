@@ -352,9 +352,29 @@ input { font: inherit; }
     rgba(255,255,255,0.41) 69%,
     rgba(255,255,255,0.68) 73%,
     rgba(255,255,255,0.90) 77%,
-    rgba(255,255,255,0.97) 78%,
-    #ffffff 82%,
+    rgba(255,255,255,0.97) 88%,
+    #ffffff 92%,
     #ffffff 100%);
+}
+/* Desktop only: the title sits low enough in the banner (see
+   .hero-banner__content) that reaching solid white at 92% still leaves
+   the title starting on a not-quite-white frame. Reaching solid white at
+   75% instead measures out to exactly a 40px white gap before the title
+   at this section's current height/type-size — mobile is untouched. */
+@media (min-width: 640px) {
+  .hero-banner__fade {
+    background: linear-gradient(to bottom,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0) 55%,
+      rgba(255,255,255,0.03) 57%,
+      rgba(255,255,255,0.16) 60%,
+      rgba(255,255,255,0.41) 63%,
+      rgba(255,255,255,0.68) 65%,
+      rgba(255,255,255,0.90) 67%,
+      rgba(255,255,255,0.97) 73%,
+      #ffffff 75%,
+      #ffffff 100%);
+  }
 }
 .hero-banner__content {
   position: relative; z-index: 10; margin: 0 auto; display: flex; width: 100%;
