@@ -316,17 +316,23 @@ input { font: inherit; }
   display: flex;
   width: 100%;
   flex-direction: column;
+  justify-content: flex-end;
   overflow: hidden;
   background: #fff;
+  /* Figma reference proportion (525 / 1512 = 34.72% of width), bumped up
+     15% (34.72 * 1.15 ≈ 39.93vw) for a taller banner while keeping the same
+     aspect-ratio-based approach — tracks the design at any screen size,
+     no upper cap. Floor bumped by the same 15% so the content block
+     (lockup + title + subtitle + padding, ~224px) never gets squeezed. */
+  height: max(276px, 39.93vw);
 }
-/* Video box's own height is untouched — same formula as always. Figma
-   reference proportion (525 / 1512 = 34.72% of width), bumped up 15%
-   (34.72 * 1.15 ≈ 39.93vw) for a taller banner while keeping the same
-   aspect-ratio-based approach — tracks the design at any screen size, no
-   upper cap. Floor bumped by the same 15% so the lockup (which centers on
-   this box) never gets squeezed. */
-.hero-banner__media { position: relative; width: 100%; height: max(276px, 39.93vw); overflow: hidden; }
-@media (max-width: 639px) { .hero-banner__media { height: 400px; } }
+/* Title+subtitle sit lower than the 276px floor was sized for (see
+   .hero-banner__row's gap), so the title rides up into the independently-
+   centered lockup above it without more room. Fixed height (not just a
+   taller floor) since vw-scaling still needs to take over at the same
+   640px handoff as everything else in this banner. */
+@media (max-width: 639px) { .hero-banner { height: 400px; } }
+.hero-banner__media { position: absolute; inset: 0; }
 /* The container is a short band, so `cover` only ever shows a slice of the
    frame. Centred put that slice across the performers' chests; pulling the
    focal point up the source frame brings their heads into it. */
@@ -334,10 +340,10 @@ input { font: inherit; }
 .hero-banner__fade {
   position: absolute; inset: 0;
   /* Fully transparent until 55% — more raw video visible before the fade
-     starts — then a smootherstep ease up to fully solid white by 96%, with
-     only a thin flat white buffer right at the edge (not the old 85-100%
-     stretch, which was a huge chunk of guaranteed blank space at the
-     bottom of the box regardless of any margin added below it). */
+     starts — then a smootherstep ease up to fully solid white by 85%, with
+     a flat white buffer from 85% to 100% (not right at the edge) so the
+     section below, which overlaps the hero's last 40px, never cuts into
+     visible video grain/texture. */
   background: linear-gradient(to bottom,
     rgba(255,255,255,0) 0%,
     rgba(255,255,255,0) 55%,
@@ -346,20 +352,38 @@ input { font: inherit; }
     rgba(255,255,255,0.41) 69%,
     rgba(255,255,255,0.68) 73%,
     rgba(255,255,255,0.90) 77%,
-    rgba(255,255,255,0.97) 97%,
-    #ffffff 99%,
+    rgba(255,255,255,0.97) 88%,
+    #ffffff 92%,
     #ffffff 100%);
 }
-/* Title/subtitle now live below the (untouched) video box in normal flow
-   instead of overlapping inside it, so they can be nudged down without
-   touching the video at all. Only a small margin, not a literal 40px —
-   the video's own fade already reads as a good chunk of blank space
-   before this box even starts, so a modest nudge here reads as ~40px of
-   breathing room total instead of stacking a full 40px on top of that. */
+/* Desktop only: title/subtitle overlap this fade by design (see
+   .hero-banner__content's flex-end anchoring below) — there's no real
+   margin between "video" and "text" here, so the illusion of a 40px gap
+   comes entirely from where this gradient finishes fading to solid
+   white. Reaching solid white at 75% instead of 92% lands the title
+   right at that 40px mark for this section's current height/type-size.
+   Mobile keeps the original 92% curve untouched. */
+@media (min-width: 640px) {
+  .hero-banner__fade {
+    background: linear-gradient(to bottom,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0) 55%,
+      rgba(255,255,255,0.03) 57%,
+      rgba(255,255,255,0.16) 60%,
+      rgba(255,255,255,0.41) 63%,
+      rgba(255,255,255,0.68) 65%,
+      rgba(255,255,255,0.90) 67%,
+      rgba(255,255,255,0.97) 73%,
+      #ffffff 75%,
+      #ffffff 100%);
+  }
+}
 .hero-banner__content {
   position: relative; z-index: 10; margin: 0 auto; display: flex; width: 100%;
   max-width: 1512px; flex-direction: column; align-items: center; text-align: center; gap: 25px;
-  padding: 0 24px 40px;
+  /* Bottom-weighted padding — the block sits low in the banner, inside the
+     gradient's fade zone, instead of centered in the clear video area. */
+  padding: 24px 24px 40px;
 }
 @media (min-width: 1024px) { .hero-banner__content { padding-left: 96px; padding-right: 96px; } }
 /* Centered independently in the video itself (not in the bottom-weighted
@@ -1303,7 +1327,6 @@ input { font: inherit; }
       <source src="assets/hero-banner.mp4" type="video/mp4" />
     </video>
     <div class="hero-banner__fade" aria-hidden="true"></div>
-    <img src="assets/moc_lockup.webp" alt="Ministry of Culture" class="hero-banner__lockup" />
   </div>
   <div class="hero-banner__actions">
     <button type="button" class="hero-banner__btn" aria-label="Share">
@@ -1317,6 +1340,7 @@ input { font: inherit; }
       </span>
     </button>
   </div>
+  <img src="assets/moc_lockup.webp" alt="Ministry of Culture" class="hero-banner__lockup" />
   <div class="hero-banner__content">
     <div class="hero-banner__row">
       <h1 class="hero-banner__title">Ministry of Culture</h1>
