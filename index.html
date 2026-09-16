@@ -334,9 +334,10 @@ input { font: inherit; }
 .hero-banner__fade {
   position: absolute; inset: 0;
   /* Fully transparent until 55% — more raw video visible before the fade
-     starts — then a smootherstep ease up to fully solid white by 85%, with
-     a flat white buffer from 85% to 100% (not right at the edge) so the
-     grain/texture never shows right at the video's own bottom edge. */
+     starts — then a smootherstep ease up to fully solid white by 96%, with
+     only a thin flat white buffer right at the edge (not the old 85-100%
+     stretch, which was a huge chunk of guaranteed blank space at the
+     bottom of the box regardless of any margin added below it). */
   background: linear-gradient(to bottom,
     rgba(255,255,255,0) 0%,
     rgba(255,255,255,0) 55%,
@@ -345,8 +346,8 @@ input { font: inherit; }
     rgba(255,255,255,0.41) 69%,
     rgba(255,255,255,0.68) 73%,
     rgba(255,255,255,0.90) 77%,
-    rgba(255,255,255,0.97) 88%,
-    #ffffff 92%,
+    rgba(255,255,255,0.97) 92%,
+    #ffffff 96%,
     #ffffff 100%);
 }
 /* Title/subtitle now live below the (untouched) video box in normal flow
