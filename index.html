@@ -316,24 +316,23 @@ input { font: inherit; }
   display: flex;
   width: 100%;
   flex-direction: column;
+  justify-content: flex-end;
   overflow: hidden;
   background: #fff;
+  /* Figma reference proportion (525 / 1512 = 34.72% of width), bumped up
+     15% (34.72 * 1.15 ≈ 39.93vw) for a taller banner while keeping the same
+     aspect-ratio-based approach — tracks the design at any screen size,
+     no upper cap. Floor bumped by the same 15% so the content block
+     (lockup + title + subtitle + padding, ~224px) never gets squeezed. */
+  height: max(276px, 39.93vw);
 }
-/* Video box now owns its own height and sits in normal flow — the title
-   block below it (.hero-banner__content) is a separate flow sibling with
-   its own margin-top, so the two can never overlap regardless of banner
-   height. Figma reference proportion (525 / 1512 = 34.72% of width),
-   bumped up 15% (34.72 * 1.15 ≈ 39.93vw) for a taller banner while keeping
-   the same aspect-ratio-based approach — tracks the design at any screen
-   size, no upper cap. Floor bumped by the same 15% so the lockup (which
-   centers on this box) never gets squeezed. */
-.hero-banner__media { position: relative; width: 100%; height: max(276px, 39.93vw); overflow: hidden; }
-/* Restores the mobile video's previously-approved height (it was bumped
-   from the 276px floor earlier to fit the lockup + gapped title/subtitle
-   inside this same box) — with the title now living below the video
-   instead of inside it, this is purely about matching the video's already-
-   approved on-screen size on mobile, not preventing any overlap. */
-@media (max-width: 639px) { .hero-banner__media { height: 400px; } }
+/* Title+subtitle sit lower than the 276px floor was sized for (see
+   .hero-banner__row's gap), so the title rides up into the independently-
+   centered lockup above it without more room. Fixed height (not just a
+   taller floor) since vw-scaling still needs to take over at the same
+   640px handoff as everything else in this banner. */
+@media (max-width: 639px) { .hero-banner { height: 400px; } }
+.hero-banner__media { position: absolute; inset: 0; }
 /* The container is a short band, so `cover` only ever shows a slice of the
    frame. Centred put that slice across the performers' chests; pulling the
    focal point up the source frame brings their heads into it. */
@@ -343,7 +342,8 @@ input { font: inherit; }
   /* Fully transparent until 55% — more raw video visible before the fade
      starts — then a smootherstep ease up to fully solid white by 85%, with
      a flat white buffer from 85% to 100% (not right at the edge) so the
-     grain/texture never shows right at the video's own bottom edge. */
+     section below, which overlaps the hero's last 40px, never cuts into
+     visible video grain/texture. */
   background: linear-gradient(to bottom,
     rgba(255,255,255,0) 0%,
     rgba(255,255,255,0) 55%,
@@ -357,9 +357,11 @@ input { font: inherit; }
     #ffffff 100%);
 }
 .hero-banner__content {
-  position: relative; z-index: 10; margin: 40px auto 0; display: flex; width: 100%;
+  position: relative; z-index: 10; margin: 0 auto; display: flex; width: 100%;
   max-width: 1512px; flex-direction: column; align-items: center; text-align: center; gap: 25px;
-  padding: 0 24px 40px;
+  /* Bottom-weighted padding — the block sits low in the banner, inside the
+     gradient's fade zone, instead of centered in the clear video area. */
+  padding: 24px 24px 40px;
 }
 @media (min-width: 1024px) { .hero-banner__content { padding-left: 96px; padding-right: 96px; } }
 /* Centered independently in the video itself (not in the bottom-weighted
@@ -1303,7 +1305,6 @@ input { font: inherit; }
       <source src="assets/hero-banner.mp4" type="video/mp4" />
     </video>
     <div class="hero-banner__fade" aria-hidden="true"></div>
-    <img src="assets/moc_lockup.webp" alt="Ministry of Culture" class="hero-banner__lockup" />
   </div>
   <div class="hero-banner__actions">
     <button type="button" class="hero-banner__btn" aria-label="Share">
@@ -1317,6 +1318,7 @@ input { font: inherit; }
       </span>
     </button>
   </div>
+  <img src="assets/moc_lockup.webp" alt="Ministry of Culture" class="hero-banner__lockup" />
   <div class="hero-banner__content">
     <div class="hero-banner__row">
       <h1 class="hero-banner__title">Ministry of Culture</h1>
